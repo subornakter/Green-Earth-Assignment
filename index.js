@@ -1,6 +1,9 @@
 const categoryContainer = document.getElementById("categoryContainer");
 const cardContainer = document.getElementById("cardContainer");
 
+const callBtn = document.getElementById("call-btn");
+let cart=[];
+
 // Load all categories
 
 const loadCategory = () => {
@@ -68,12 +71,12 @@ const showPlantByCategory = (plants) => {
                         <p ">${plant.category}</p>
             </div>
             <div>
-             <p class="text-xl font-semibold">$ ${plant.price}</p>
+             <p id="plant-price" class="text-xl font-semibold">$ ${plant.price}</p>
             </div>
            
           </div>
           <div class="card-actions">
-            <button class="btn bg-[#15803D] rounded-3xl text-white w-full">Add to Cart</button>
+            <button id="call_btn" class="btn bg-[#15803D] rounded-3xl text-white w-full">Add to Cart</button>
           </div>
         </div>
       </div>
@@ -90,6 +93,67 @@ const showError = (message) => {
 
 // Initial load
 loadCategory();
+
+
+  cardContainer.addEventListener("click", (e) => {
+  // console.log(e.target)
+  // console.log(e.target.innerText)
+  if (e.target.innerText === "Add to Cart") {
+    handleCart(e);
+  }
+  });
+
+  const handleCart = (e) => {
+  const category = e.target.parentNode.parentNode.children[0].innerText;
+  const price = e.target.parentNode.parentNode.children[2].children[1].innerText;
+  console.log(price);
+  //  console.log(category);
+
+  cart.push({
+    category: category,
+    price: price,
+    
+  });
+
+   showCart(cart);
+  
+};
+
+const showCart = (cart) => {
+  callBtn.innerHTML = "";
+  let total = 0;
+
+  cart.forEach(cartAdd => {
+  
+    const priceNum = parseFloat(cartAdd.price.replace("$", "").trim());
+    total += priceNum;
+
+    callBtn.innerHTML += `
+      <div class="flex justify-between items-center rounded-sm bg-[#f7fff9] shadow-sm my-2 p-2">
+        <div>
+          <h1 class="text-[14px] font-bold ">${cartAdd.category}</h1>
+          <h1 class="text-gray-500">${cartAdd.price}</h1>
+        </div>
+        <button onclick="handleDeleteCart('${cartAdd.category}')" class="btn btn-xs"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    `;
+  });
+
+  if (cart.length > 0) {
+    callBtn.innerHTML += `
+      <div class="border-t mt-3 pt-2 text-right font-semibold text-lg">
+        Total: $${total.toFixed(2)}
+      </div>
+    `;
+  }
+};
+
+const handleDeleteCart = (category) => {
+   const filteredCart =  cart.filter(cartAdd => cartAdd.category !== category);
+   cart = filteredCart;
+   showCart(cart);
+}
+ 
 
 
 

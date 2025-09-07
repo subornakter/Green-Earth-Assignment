@@ -18,27 +18,38 @@ const loadCategory = () => {
       console.log(err);
     });
 };
+
 const showCategory = (categories) => {
+  categoryContainer.innerHTML = `
+    <li id="all" class=" space-y-6 pt-3 text-[16px] hover:bg-green-600 rounded-sm p-1 cursor-pointer">
+      All Trees
+    </li>
+  `;
+
   categories.forEach((cat) => {
     categoryContainer.innerHTML += `
-            <li id="${cat.id}" class=" space-y-6 pt-3 text-[16px] hover:bg-green-600 rounded-sm p-1 cursor-pointer
-            ">${cat.category_name}</li>
-        `;
+      <li id="${cat.id}" class=" space-y-6 pt-3 text-[16px] hover:bg-green-600 rounded-sm p-1 cursor-pointer">
+        ${cat.category_name}
+      </li>
+    `;
   });
-    categoryContainer.addEventListener("click", (e) => {
-     const allLi = document.querySelectorAll("li");
-         allLi.forEach((li) => {
-      li.classList.remove("bg-green-600");
-    });
-    //console.log(e.target);
-    if(e.target.localName === "li"){
-          
-      e.target.classList.add('bg-green-600')
-      loadPlantByCategory(e.target.id);
+
+  categoryContainer.addEventListener("click", (e) => {
+    const allLi = document.querySelectorAll("li");
+    allLi.forEach((li) => li.classList.remove("bg-green-600"));
+
+    if (e.target.localName === "li") {
+      e.target.classList.add("bg-green-600");
+
+      if (e.target.id === "all") {
+        loadAllPlants();
+      } else {
+        loadPlantByCategory(e.target.id);
+      }
     }
-    
-    });
+  });
 };
+
 
 // Load plants by category
 const loadPlantByCategory = (id) => {
@@ -91,8 +102,23 @@ const showError = (message) => {
   `;
 };
 
+const loadAllPlants = () => {
+  fetch("https://openapi.programming-hero.com/api/plants")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.plants && data.plants.length > 0) {
+        showPlantByCategory(data.plants);
+      } else {
+        showError("No plants found.");
+      }
+    })
+    .catch((err) => showError("Failed to load plants."));
+};
+
+
 // Initial load
 loadCategory();
+loadAllPlants();
 
 
   cardContainer.addEventListener("click", (e) => {

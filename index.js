@@ -143,15 +143,18 @@ const handleCart = (e) => {
   const category = e.target.parentNode.parentNode.children[0].innerText;
   const price =
     e.target.parentNode.parentNode.children[2].children[1].innerText;
-  console.log(price);
-  alert(`${category} has been added to the cart`);
-  //  console.log(category);
 
-  cart.push({
-    category: category,
-    price: price,
-  });
+  const existing = cart.find((item) => item.category === category);
 
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({
+      category: category,
+      price: price,
+      quantity: 1,
+    });
+  }
   showCart(cart);
 };
 
@@ -161,15 +164,15 @@ const showCart = (cart) => {
 
   cart.forEach((cartAdd) => {
     const priceNum = parseFloat(cartAdd.price.replace("৳", "").trim());
-    total += priceNum;
+    total += priceNum * cartAdd.quantity;
 
     callBtn.innerHTML += `
       <div class="flex justify-between items-center rounded-sm bg-[#f7fff9] shadow-sm my-2 p-2">
         <div>
           <h1 class="text-[14px] font-bold ">${cartAdd.category}</h1>
-          <h1 class="text-gray-500">${cartAdd.price}</h1>
+          <h1 class="text-gray-500">${cartAdd.price} x${cartAdd.quantity}</h1>
         </div>
-        <button onclick="handleDeleteCart('${cartAdd.category}')" class="btn btn-xs"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="handleDeleteCart('${cartAdd.category}')" class="btn btn-xs">❌</button>
       </div>
     `;
   });
@@ -184,8 +187,14 @@ const showCart = (cart) => {
 };
 
 const handleDeleteCart = (category) => {
-  const filteredCart = cart.filter((cartAdd) => cartAdd.category !== category);
-  cart = filteredCart;
+  const item = cart.find((cartAdd) => cartAdd.category === category);
+  if (item) {
+    if (item.quantity > 1) {
+      item.quantity -= 1;
+    } else {
+      cart = cart.filter((cartAdd) => cartAdd.category !== category);
+    }
+  }
   showCart(cart);
 };
 

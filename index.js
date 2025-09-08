@@ -2,6 +2,7 @@ const categoryContainer = document.getElementById("categoryContainer");
 const cardContainer = document.getElementById("cardContainer");
 
 const callBtn = document.getElementById("call-btn");
+
 let cart=[];
 
 // Load all categories
@@ -19,16 +20,25 @@ const loadCategory = () => {
     });
 };
 
+const manageSpinner = (status) => {
+  if (status == true) {
+    document.getElementById("spinner").classList.remove("hidden");
+    document.getElementById("cardContainer").classList.add("hidden");
+  } else {
+    document.getElementById("cardContainer").classList.remove("hidden");
+    document.getElementById("spinner").classList.add("hidden");
+  }
+};
 const showCategory = (categories) => {
   categoryContainer.innerHTML = `
-    <li id="all" class=" space-y-6 pt-3 text-[16px] hover:bg-green-600 rounded-sm p-1 cursor-pointer">
+    <li id="all" class=" space-y-6 pt-3 text-[16px] hover:bg-green-400 rounded-sm p-1 cursor-pointer">
       All Trees
     </li>
   `;
 
   categories.forEach((cat) => {
     categoryContainer.innerHTML += `
-      <li id="${cat.id}" class=" space-y-6 pt-3 text-[16px] hover:bg-green-600 rounded-sm p-1 cursor-pointer">
+      <li id="${cat.id}" class=" space-y-6 pt-3 text-[16px] hover:bg-green-400 rounded-sm p-1 cursor-pointer">
         ${cat.category_name}
       </li>
     `;
@@ -53,6 +63,7 @@ const showCategory = (categories) => {
 
 // Load plants by category
 const loadPlantByCategory = (id) => {
+   manageSpinner(true);
   fetch(`https://openapi.programming-hero.com/api/category/${id}`)
     .then((res) => res.json())
     .then((data) => {
@@ -60,6 +71,7 @@ const loadPlantByCategory = (id) => {
         showPlantByCategory(data.plants); 
       } else {
         showError("No plants found in this category.");
+          manageSpinner(false);
       }
     })
     .catch((err) => showError("Failed to load plants."));
@@ -68,31 +80,35 @@ const loadPlantByCategory = (id) => {
 const showPlantByCategory = (plants) => {
   cardContainer.innerHTML = ""; 
 
-  plants.forEach((plant) => {
-    cardContainer.innerHTML += `
-      <div class="card bg-white h-[500px] shadow-sm">
-        <figure class="">
-           <img src="${plant.image}" alt="plant" class="rounded-xl w-full h-full" />
-        </figure>
-        <div class="card-body items-left text-left">
-          <h2 class="card-title">${plant.name}</h2>
-          <p class="text-[10px] text-gray-500">${plant.description}</p>
-          <div class="mt-2 flex justify-between items-center ">
-            <div class="bg-[#CFF0DC] rounded-2xl p-2 text-green-500 w-[100px] text-center text-[10px]>
-                        <p ">${plant.category}</p>
-            </div>
-            <div>
-             <p id="plant-price" class="text-xl font-semibold">$ ${plant.price}</p>
-            </div>
-           
+ plants.forEach((plant) => {
+  cardContainer.innerHTML += `
+    <div class="card bg-white h-[500px] shadow-md" data-id="${plant.id}">
+      <figure>
+        <img src="${plant.image}" alt="plant" class="rounded-xl w-full h-full" />
+      </figure>
+      <div class="card-body items-left text-left">
+        <h2 onclick="loadWordDetail(${
+            plant.id
+          })">${plant.name}</h2>
+        <p class="text-[10px] text-gray-500">${plant.description}</p>
+        <div class="mt-2 flex justify-between items-center">
+          <div class="bg-[#CFF0DC] rounded-2xl p-2 text-green-500 w-[100px] text-center text-[10px]">
+            <p>${plant.category}</p>
           </div>
-          <div class="card-actions">
-            <button id="call_btn" class="btn bg-[#15803D] rounded-3xl text-white w-full">Add to Cart</button>
+          <div>
+            <p id="plant-price" class="text-xl font-semibold">$ ${plant.price}</p>
           </div>
         </div>
+        <div class="card-actions">
+          <button id="call_btn" class="btn bg-[#15803D] rounded-3xl text-white w-full">Add to Cart</button>
+        </div>
       </div>
-    `;
-  });
+    </div>
+  `;
+});
+ manageSpinner(false);
+    return;
+
 };
 
 // Show error message
@@ -103,6 +119,7 @@ const showError = (message) => {
 };
 
 const loadAllPlants = () => {
+   manageSpinner(true); 
   fetch("https://openapi.programming-hero.com/api/plants")
     .then((res) => res.json())
     .then((data) => {
@@ -110,6 +127,7 @@ const loadAllPlants = () => {
         showPlantByCategory(data.plants);
       } else {
         showError("No plants found.");
+         manageSpinner(false); 
       }
     })
     .catch((err) => showError("Failed to load plants."));
@@ -127,6 +145,7 @@ loadAllPlants();
   if (e.target.innerText === "Add to Cart") {
     handleCart(e);
   }
+  
   });
 
   const handleCart = (e) => {
@@ -180,6 +199,39 @@ const handleDeleteCart = (category) => {
    showCart(cart);
 }
  
+const loadWordDetail = async (id) => {
+  console.log(id);
+  const url = `https://openapi.programming-hero.com/api/plant/${id}`;
+  const res = await fetch(url);
+  const details = await res.json();
+  displayWordDetails(details.plants); 
+};
+
+const displayWordDetails = (plant) => {
+  const detailsBox = document.getElementById("details-container");
+  detailsBox.innerHTML = `
+ <div class="card " data-id="${plant.id}">
+  <h2 class="text-xl font-bold mb-2">${plant.name}</h2>
+  <figure class="mb-4">
+    <img src="${plant.image}" alt="${plant.name}" class="rounded-xl w-full h-[200px] object-cover" />
+  </figure>
+  <p class="mb-1 text-gray-600">
+    <span class="text-[14px] text-black font-bold">Category:</span> ${plant.category}
+  </p>
+  <p class="mb-1 text-gray-600">
+    <span class="text-[14px] text-black font-bold">Price:</span> $${plant.price}
+  </p>
+  <p class="text-gray-600 text-[12px]">
+    <span class="text-[14px] font-bold text-black">Description:</span> ${plant.description}
+  </p>
+</div>
+
+  `;
+
+  // modal show
+  document.getElementById("word_modal").showModal();
+};
+
 
 
 

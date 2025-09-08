@@ -87,11 +87,11 @@ const showPlantByCategory = (plants) => {
         <h2 onclick="loadWordDetail(${plant.id})">${plant.name}</h2>
         <p class="text-[10px] text-gray-500">${plant.description}</p>
         <div class="mt-2 flex justify-between items-center">
-          <div class="bg-[#CFF0DC] rounded-2xl p-2 text-green-500 w-[100px] text-center text-[10px]">
+          <div class="bg-[#CFF0DC] rounded-2xl p-2 text-green-700 w-[100px] text-center text-[10px]">
             <p>${plant.category}</p>
           </div>
           <div>
-            <p id="plant-price" class="text-xl font-semibold">$ ${plant.price}</p>
+            <p id="plant-price" class="text-xl font-semibold">৳ ${plant.price}</p>
           </div>
         </div>
         <div class="card-actions">
@@ -209,7 +209,7 @@ const displayWordDetails = (plant) => {
     <span class="text-[14px] text-black font-bold">Category:</span> ${plant.category}
   </p>
   <p class="mb-1 text-gray-600">
-    <span class="text-[14px] text-black font-bold">Price:</span> $${plant.price}
+    <span class="text-[14px] text-black font-bold">Price:</span> ৳${plant.price}
   </p>
   <p class="text-gray-600 text-[12px]">
     <span class="text-[14px] font-bold text-black">Description:</span> ${plant.description}

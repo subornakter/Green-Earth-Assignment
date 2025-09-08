@@ -160,7 +160,7 @@ const showCart = (cart) => {
   let total = 0;
 
   cart.forEach((cartAdd) => {
-    const priceNum = parseFloat(cartAdd.price.replace("$", "").trim());
+    const priceNum = parseFloat(cartAdd.price.replace("৳", "").trim());
     total += priceNum;
 
     callBtn.innerHTML += `
@@ -177,7 +177,7 @@ const showCart = (cart) => {
   if (cart.length > 0) {
     callBtn.innerHTML += `
       <div class="border-t mt-3 pt-2 text-right font-semibold text-lg">
-        Total: $${total.toFixed(2)}
+        Total: ৳${total.toFixed(2)}
       </div>
     `;
   }
@@ -209,7 +209,7 @@ const displayWordDetails = (plant) => {
     <span class="text-[14px] text-black font-bold">Category:</span> ${plant.category}
   </p>
   <p class="mb-1 text-gray-600">
-    <span class="text-[14px] text-black font-bold">Price:</span> ৳${plant.price}
+    <span class="text-[14px] text-black font-bold">Price:</span> $${plant.price}
   </p>
   <p class="text-gray-600 text-[12px]">
     <span class="text-[14px] font-bold text-black">Description:</span> ${plant.description}

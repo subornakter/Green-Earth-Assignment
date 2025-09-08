@@ -1,9 +1,7 @@
 const categoryContainer = document.getElementById("categoryContainer");
 const cardContainer = document.getElementById("cardContainer");
-
 const callBtn = document.getElementById("call-btn");
-
-let cart=[];
+let cart = [];
 
 // Load all categories
 
@@ -60,36 +58,33 @@ const showCategory = (categories) => {
   });
 };
 
-
 // Load plants by category
 const loadPlantByCategory = (id) => {
-   manageSpinner(true);
+  manageSpinner(true);
   fetch(`https://openapi.programming-hero.com/api/category/${id}`)
     .then((res) => res.json())
     .then((data) => {
       if (data.plants && data.plants.length > 0) {
-        showPlantByCategory(data.plants); 
+        showPlantByCategory(data.plants);
       } else {
         showError("No plants found in this category.");
-          manageSpinner(false);
+        manageSpinner(false);
       }
     })
     .catch((err) => showError("Failed to load plants."));
 };
 
 const showPlantByCategory = (plants) => {
-  cardContainer.innerHTML = ""; 
+  cardContainer.innerHTML = "";
 
- plants.forEach((plant) => {
-  cardContainer.innerHTML += `
+  plants.forEach((plant) => {
+    cardContainer.innerHTML += `
     <div class="card bg-white h-[500px] shadow-md" data-id="${plant.id}">
       <figure>
         <img src="${plant.image}" alt="plant" class="rounded-xl w-full h-full" />
       </figure>
       <div class="card-body items-left text-left">
-        <h2 onclick="loadWordDetail(${
-            plant.id
-          })">${plant.name}</h2>
+        <h2 onclick="loadWordDetail(${plant.id})">${plant.name}</h2>
         <p class="text-[10px] text-gray-500">${plant.description}</p>
         <div class="mt-2 flex justify-between items-center">
           <div class="bg-[#CFF0DC] rounded-2xl p-2 text-green-500 w-[100px] text-center text-[10px]">
@@ -105,10 +100,9 @@ const showPlantByCategory = (plants) => {
       </div>
     </div>
   `;
-});
- manageSpinner(false);
-    return;
-
+  });
+  manageSpinner(false);
+  return;
 };
 
 // Show error message
@@ -119,7 +113,7 @@ const showError = (message) => {
 };
 
 const loadAllPlants = () => {
-   manageSpinner(true); 
+  manageSpinner(true);
   fetch("https://openapi.programming-hero.com/api/plants")
     .then((res) => res.json())
     .then((data) => {
@@ -127,49 +121,45 @@ const loadAllPlants = () => {
         showPlantByCategory(data.plants);
       } else {
         showError("No plants found.");
-         manageSpinner(false); 
+        manageSpinner(false);
       }
     })
     .catch((err) => showError("Failed to load plants."));
 };
 
-
 // Initial load
 loadCategory();
 loadAllPlants();
 
-
-  cardContainer.addEventListener("click", (e) => {
+cardContainer.addEventListener("click", (e) => {
   // console.log(e.target)
   // console.log(e.target.innerText)
   if (e.target.innerText === "Add to Cart") {
     handleCart(e);
   }
-  
-  });
+});
 
-  const handleCart = (e) => {
+const handleCart = (e) => {
   const category = e.target.parentNode.parentNode.children[0].innerText;
-  const price = e.target.parentNode.parentNode.children[2].children[1].innerText;
+  const price =
+    e.target.parentNode.parentNode.children[2].children[1].innerText;
   console.log(price);
+  alert(`${category} has been added to the cart`);
   //  console.log(category);
 
   cart.push({
     category: category,
     price: price,
-    
   });
 
-   showCart(cart);
-  
+  showCart(cart);
 };
 
 const showCart = (cart) => {
   callBtn.innerHTML = "";
   let total = 0;
 
-  cart.forEach(cartAdd => {
-  
+  cart.forEach((cartAdd) => {
     const priceNum = parseFloat(cartAdd.price.replace("$", "").trim());
     total += priceNum;
 
@@ -194,17 +184,17 @@ const showCart = (cart) => {
 };
 
 const handleDeleteCart = (category) => {
-   const filteredCart =  cart.filter(cartAdd => cartAdd.category !== category);
-   cart = filteredCart;
-   showCart(cart);
-}
- 
+  const filteredCart = cart.filter((cartAdd) => cartAdd.category !== category);
+  cart = filteredCart;
+  showCart(cart);
+};
+
 const loadWordDetail = async (id) => {
   console.log(id);
   const url = `https://openapi.programming-hero.com/api/plant/${id}`;
   const res = await fetch(url);
   const details = await res.json();
-  displayWordDetails(details.plants); 
+  displayWordDetails(details.plants);
 };
 
 const displayWordDetails = (plant) => {
@@ -227,11 +217,6 @@ const displayWordDetails = (plant) => {
 </div>
 
   `;
-
   // modal show
   document.getElementById("word_modal").showModal();
 };
-
-
-
-

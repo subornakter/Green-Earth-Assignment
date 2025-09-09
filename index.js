@@ -84,10 +84,10 @@ const showPlantByCategory = (plants) => {
         <img src="${plant.image}" alt="plant" class="rounded-xl w-full h-full" />
       </figure>
       <div class="card-body items-left text-left">
-        <h2 onclick="loadWordDetail(${plant.id})">${plant.name}</h2>
+        <h2 onclick="loadPlantDetail(${plant.id})">${plant.name}</h2>
         <p class="text-[10px] text-gray-500">${plant.description}</p>
         <div class="mt-2 flex justify-between items-center">
-          <div class="bg-[#CFF0DC] rounded-2xl p-2 text-green-700 w-[100px] text-center text-[10px]">
+          <div class="bg-[#CFF0DC] rounded-2xl p-2 text-green-700 w-[100px] text-center text-[12px]">
             <p>${plant.category}</p>
           </div>
           <div>
@@ -143,6 +143,7 @@ const handleCart = (e) => {
   const category = e.target.parentNode.parentNode.children[0].innerText;
   const price =
     e.target.parentNode.parentNode.children[2].children[1].innerText;
+  alert(`${category} has been added to the cart`);
 
   const existing = cart.find((item) => item.category === category);
 
@@ -198,15 +199,15 @@ const handleDeleteCart = (category) => {
   showCart(cart);
 };
 
-const loadWordDetail = async (id) => {
+const loadPlantDetail = async (id) => {
   console.log(id);
   const url = `https://openapi.programming-hero.com/api/plant/${id}`;
   const res = await fetch(url);
   const details = await res.json();
-  displayWordDetails(details.plants);
+  displayPlantDetails(details.plants);
 };
 
-const displayWordDetails = (plant) => {
+const displayPlantDetails = (plant) => {
   const detailsBox = document.getElementById("details-container");
   detailsBox.innerHTML = `
  <div class="card " data-id="${plant.id}">
@@ -218,7 +219,7 @@ const displayWordDetails = (plant) => {
     <span class="text-[14px] text-black font-bold">Category:</span> ${plant.category}
   </p>
   <p class="mb-1 text-gray-600">
-    <span class="text-[14px] text-black font-bold">Price:</span> $${plant.price}
+    <span class="text-[14px] text-black font-bold">Price:</span> ৳${plant.price}
   </p>
   <p class="text-gray-600 text-[12px]">
     <span class="text-[14px] font-bold text-black">Description:</span> ${plant.description}
